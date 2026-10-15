@@ -1,0 +1,25 @@
+{
+  "users": [
+    {
+      "id": 1,
+      "name": "harshit sharma",
+      "email": "harshit1122@gmail.com",
+      "password_hash": "$2a$10$KFJe1sLcti0416p/1DBd3O8EUpRimuwWHHRNdhBGJ.eB22VYgugAC",
+      "created_at": "2026-10-12T04:30:07.518Z"
+    }
+  ],
+  "prompts": [
+    {
+      "id": 1,
+      "user_id": 1,
+      "input_idea": "i want to make a website for e commerce busssiness for my shoe brand name deluxe shoes and i want a full stack web app with all essential feature and also the project should be \ngenerate a prompt with adding technical knowledge",
+      "style": "code",
+      "output": "Act as a senior software engineer who writes clean, production-quality code.\n\nContext: The user's core idea is — \"Make a website for e commerce busssiness for my shoe brand name deluxe shoes and i want a full stack web app with all essential feature and also the project should be generate a prompt with adding technical knowledge\".\n\nTask: Produce a correct, well-structured implementation with clear explanation. Focus entirely on this idea: Make a website for e commerce busssiness for my shoe brand name deluxe shoes and i want a full stack web app with all essential feature and also the project should be generate a prompt with adding technical knowledge.\n\nGuidelines:\n- Confirm the language/framework and state any assumptions\n- Write readable, well-named, commented code\n- Handle edge cases and invalid input gracefully\n- Include a short usage example and note time/space complexity where relevant\n\nConstraints:\n- Stay on topic and do not add unrelated information\n- Keep the language clear and free of filler\n- If any key detail is missing, state a reasonable assumption instead of stopping\n\nOutput format: Code block(s) first, then a brief explanation, an example run and possible improvements.",
+      "word_count": 194,
+      "is_favorite": false,
+      "created_at": "2026-10-12T04:32:10.151Z"
+    }
+  ],
+  "nextUserId": 2,
+  "nextPromptId": 2
+}

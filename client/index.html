@@ -1,0 +1,729 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>IdeaToPrompt — Free AI Prompt Generator</title>
+<meta name="description" content="Transform any raw idea into a professional AI prompt. Free, instant, no API key required. Works with ChatGPT, Claude, Gemini and more.">
+<link href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+<div id="bar"></div>
+
+<!-- VIDEO BACKGROUND -->
+<video class="hero-video" autoplay loop muted playsinline>
+  <source src="video.mp4" type="video/mp4">
+</video>
+<div class="video-overlay"></div>
+
+<!-- NAV -->
+<nav>
+  <div class="ni">
+    <a href="#" class="logo"><span class="ld"></span>IdeaToPrompt</a>
+    <div class="nl">
+      <a href="#how">How it works</a>
+      <a href="#app">Generator</a>
+      <a href="#features">Features</a>
+    </div>
+    <div style="display:flex;align-items:center;gap:12px">
+      <!-- Auth buttons (swapped dynamically) -->
+      <div class="nav-auth" id="navAuth">
+        <button class="nav-btn" id="navLoginBtn" onclick="openModal('login')">Log in</button>
+        <button class="nav-btn primary" id="navSignupBtn" onclick="openModal('register')">Sign up</button>
+      </div>
+      <div class="nav-auth" id="navUser" style="display:none">
+        <div class="nav-user">
+          <div class="avatar" id="navAvatar">U</div>
+          <span id="navName">User</span>
+        </div>
+        <button class="nav-btn" onclick="logout()">Log out</button>
+      </div>
+    </div>
+  </div>
+</nav>
+
+<!-- AUTH MODAL -->
+<div class="modal-overlay" id="authModal">
+  <div class="modal">
+    <button class="modal-close" onclick="closeModal()">✕</button>
+    <h3 id="modalTitle">Log in</h3>
+    <p class="modal-sub" id="modalSub">Welcome back. Enter your details to continue.</p>
+    <div class="form-error" id="formError"></div>
+    <div class="form-success" id="formSuccess"></div>
+    <form id="authForm" onsubmit="handleAuth(event)">
+      <div class="form-group" id="nameGroup" style="display:none">
+        <label for="authName">Name</label>
+        <input type="text" id="authName" placeholder="Your name" autocomplete="name">
+      </div>
+      <div class="form-group">
+        <label for="authEmail">Email</label>
+        <input type="email" id="authEmail" placeholder="you@example.com" autocomplete="email" required>
+      </div>
+      <div class="form-group">
+        <label for="authPassword">Password</label>
+        <input type="password" id="authPassword" placeholder="Min. 6 characters" autocomplete="current-password" required minlength="6">
+      </div>
+      <button type="submit" class="form-submit" id="authSubmit">Log in</button>
+    </form>
+    <div class="form-switch" id="formSwitch">
+      Don't have an account? <a onclick="switchAuthMode()">Sign up</a>
+    </div>
+  </div>
+</div>
+
+<!-- HERO -->
+<section style="position: relative; overflow: hidden;">
+  <div class="floating-elements">
+    <div class="f-card c-yellow rv d2" style="--tx: -200px; --ty: -120px; --rz: -15deg; --d: 6s; --w: 100px; --h: 60px;">
+      <span class="f-logo">Creative</span>
+    </div>
+    <div class="f-card c-green rv d1" style="--tx: -250px; --ty: 70px; --rz: -5deg; --d: 8s; --w: 110px; --h: 75px;">
+      <span class="f-logo">Code</span>
+    </div>
+    <div class="f-card c-blue rv d4" style="--tx: 240px; --ty: 90px; --rz: 15deg; --d: 9s; --w: 110px; --h: 70px;">
+      <span class="f-logo">Analyze</span>
+    </div>
+    <div class="f-card c-white rv d5" style="--tx: 290px; --ty: -30px; --rz: 8deg; --d: 5s; --w: 95px; --h: 60px;">
+      <span class="f-logo">SEO</span>
+    </div>
+    
+    <div class="f-toggle rv d2" style="--tx: 200px; --ty: -120px; --rz: 20deg; --d: 7.5s;">
+      <div class="f-tknob"></div>
+    </div>
+    <div class="f-glass rv d3" style="--tx: 350px; --ty: 50px; --rz: -15deg; --d: 6.5s;">
+      <div class="f-fingerprint">✦</div>
+    </div>
+    <div class="f-cursor rv d4" style="--tx: -100px; --ty: 110px; --rz: 0deg; --d: 4s;">
+      <svg width="48" height="48" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <path d="M5.5 2.5L18.5 12L12 13L15 20.5L12.5 21.5L9.5 14L4 18V2.5Z" fill="#111" stroke="#fff" stroke-width="1.5" stroke-linejoin="round"/>
+      </svg>
+    </div>
+  </div>
+
+  <div class="hero">
+    <h1 class="nb-title rv d1">
+      <span class="t-charcoal">Turn any</span><br>
+      <span class="t-orange">idea</span><br>
+      <span class="t-charcoal">into the perfect prompt</span>
+    </h1>
+    <div class="ctas rv d3 nb-ctas">
+      <a href="#app" class="btn-nb-primary">Get started <div class="fold"></div></a>
+      <a href="#how" class="btn-nb-secondary">How it works</a>
+    </div>
+  </div>
+</section>
+
+<!-- HOW IT WORKS -->
+<section id="how">
+  <div class="si">
+    <div class="slabel rv">Process</div>
+    <h2 class="st2 rv d1">Simple. Smart.<br>Surprisingly good.</h2>
+    <p class="ssub rv d2">Three steps from raw idea to a prompt that makes any AI model perform at its absolute peak.</p>
+    <div class="sgrid">
+      <div class="gc sc rv d1">
+        <div class="snum">01</div>
+        <div class="title-wrap">
+          <div class="odot"></div>
+          <div class="stitle">Write your idea</div>
+        </div>
+        <div class="sdesc">Type anything — a concept, a task, a vague thought. The messier the better.</div>
+      </div>
+      <div class="gc sc rv d2">
+        <div class="snum">02</div>
+        <div class="title-wrap">
+          <div class="odot"></div>
+          <div class="stitle">Pick your style</div>
+        </div>
+        <div class="sdesc">Choose how your prompt should be tuned — creative, code, marketing, education & more.</div>
+      </div>
+      <div class="gc sc rv d3">
+        <div class="snum">03</div>
+        <div class="title-wrap">
+          <div class="odot"></div>
+          <div class="stitle">Get your prompt</div>
+        </div>
+        <div class="sdesc">A professional, structured prompt ready to paste into ChatGPT, Claude, Gemini or any AI.</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- GENERATOR -->
+<section id="app">
+  <div class="si">
+    <div class="slabel rv">Generator</div>
+    <h2 class="st2 rv d1">Engineer your <em style="font-style:italic;color:var(--accent)">perfect</em> prompt.</h2>
+    <div style="height:44px"></div>
+
+    <div style="max-width:780px">
+      <!-- STYLE -->
+      <div class="rv">
+        <div style="font-size:.7rem;font-weight:500;letter-spacing:.14em;text-transform:uppercase;color:var(--text3);margin-bottom:12px">Prompt Style</div>
+        <div class="pills" id="pillsRow">
+          <button class="pill on" data-style="creative" data-desc="Imaginative, expressive, rich in visual detail">✦ Creative</button>
+          <button class="pill" data-style="technical" data-desc="Precise, structured, step-by-step accuracy">⚙ Technical</button>
+          <button class="pill" data-style="storytelling" data-desc="Narrative, emotional, character-driven">📖 Storytelling</button>
+          <button class="pill" data-style="marketing" data-desc="Persuasive, bold, conversion-focused">📣 Marketing</button>
+          <button class="pill" data-style="educational" data-desc="Clear, pedagogical, example-rich">🎓 Educational</button>
+          <button class="pill" data-style="code" data-desc="Implementation-focused, technically precise">💻 Code</button>
+        </div>
+        <div id="descLine" style="font-size:.79rem;color:var(--text3);margin-bottom:22px;min-height:18px;transition:opacity .2s">Imaginative, expressive, rich in visual detail</div>
+      </div>
+
+      <!-- INPUT -->
+      <div class="rv d1">
+        <div style="font-size:.7rem;font-weight:500;letter-spacing:.14em;text-transform:uppercase;color:var(--text3);margin-bottom:10px">Your Idea</div>
+        <div class="iw">
+          <textarea class="ii" id="idea" maxlength="600" placeholder="e.g. a productivity app that uses psychology principles to help people build better habits..."></textarea>
+          <div class="cc"><span id="cn">0</span>/600</div>
+        </div>
+        <div style="font-size:.73rem;color:var(--text3)">Ctrl + Enter to generate</div>
+      </div>
+
+      <div style="height:18px"></div>
+
+      <button class="bp rv d2" id="genBtn" onclick="gen()" style="width:100%;padding:16px;font-size:.93rem;border-radius:14px;display:block;text-align:center">
+        <span id="btext">Generate Prompt →</span>
+      </button>
+
+      <div class="eb" id="err"></div>
+
+      <!-- OUTPUT -->
+      <div class="ow" id="out">
+        <div class="oc">
+          <div class="oh">
+            <div class="olabel">Your Advanced Prompt</div>
+            <div class="out-actions">
+              <button class="cb" id="favBtn" onclick="toggleFav()" style="display:none" title="Save to favorites">♡ Favorite</button>
+              <button class="cb" id="cpBtn" onclick="cp()">Copy</button>
+            </div>
+          </div>
+          <div class="ot" id="ot"></div>
+          <div class="tags" id="trow"></div>
+          <div style="margin-top:14px;font-size:.73rem;color:var(--text3);display:flex;gap:12px;flex-wrap:wrap">
+            <span id="wc"></span><span>·</span><span>Works with ChatGPT · Claude · Gemini · Mistral</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- PROMPT HISTORY (shown when logged in) -->
+      <div class="history-section" id="historySection">
+        <div class="history-header">
+          <h3>Your Prompt History</h3>
+          <button class="cb" id="historyRefresh" onclick="loadHistory()">↻ Refresh</button>
+        </div>
+        <div class="history-list" id="historyList">
+          <div class="history-empty">Generate some prompts to see them here!</div>
+        </div>
+        <button class="cb history-load-more" id="historyMore" onclick="loadMoreHistory()" style="display:none">Load more</button>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- FEATURES -->
+<section id="features">
+  <div class="si" style="padding-top:0">
+    <div class="slabel rv">Why IdeaToPrompt</div>
+    <h2 class="st2 rv d1">Everything you need.<br>Nothing you don't.</h2>
+    <div class="fgrid rv d2">
+      <div class="fc">
+        <div class="title-wrap"><div class="odot"></div><div class="ft">Idea Translation Engine</div></div>
+        <div class="fd">Transform raw, messy thoughts into perfectly structured AI instructions.</div>
+      </div>
+      <div class="fc">
+        <div class="title-wrap"><div class="odot"></div><div class="ft">Lightning Generation</div></div>
+        <div class="fd">No waiting. Get your engineered prompt in under 2 seconds.</div>
+      </div>
+      <div class="fc">
+        <div class="title-wrap"><div class="odot"></div><div class="ft">6 Specialized Styles</div></div>
+        <div class="fd">Tailor your outputs instantly for Code, Creative, Marketing, or SEO.</div>
+      </div>
+      <div class="fc">
+        <div class="title-wrap"><div class="odot"></div><div class="ft">Universal Compatibility</div></div>
+        <div class="fd">One-click copy. Works flawlessly with ChatGPT, Claude, Gemini, and Mistral.</div>
+      </div>
+      <div class="fc">
+        <div class="title-wrap"><div class="odot"></div><div class="ft">Zero Friction</div></div>
+        <div class="fd">No API keys, no credit cards, no signups required. Just type and generate.</div>
+      </div>
+      <div class="fc">
+        <div class="title-wrap"><div class="odot"></div><div class="ft">Privacy First</div></div>
+        <div class="fd">Your ideas remain yours. We don't train models on your raw input.</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- CTA -->
+<section>
+  <div class="si" style="padding-top:0">
+    <div class="ctaw rv">
+      <div class="slabel" style="justify-content:center">Get Started</div>
+      <h2 class="st2" style="font-size:clamp(1.8rem,4vw,2.9rem)">Ready to write your<br>first great prompt?</h2>
+      <p style="color:var(--text2);margin:14px auto 34px;max-width:380px;font-size:.93rem">Free, instant, no setup. Your ideas deserve better prompts.</p>
+      <a href="#app" class="bp" style="font-size:.9rem;padding:15px 38px">Start generating →</a>
+    </div>
+  </div>
+</section>
+
+<!-- FOOTER -->
+<footer>
+  <div class="fi2">
+    <a href="#" class="logo"><span class="ld"></span>IdeaToPrompt</a>
+    <div class="fn">idea to prompt a project by HARSHIT SHARMA</div>
+    <div class="social-links">
+      <a href="https://x.com/Harshit_2676" target="_blank" rel="noopener noreferrer" aria-label="X (Twitter)">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="var(--accent)"><path d="M18.901 1.153h3.68l-8.04 9.19L24 22.846h-7.406l-5.8-7.584-6.638 7.584H.474l8.6-9.83L0 1.154h7.594l5.243 6.932ZM17.61 20.644h2.039L6.486 3.24H4.298Z"/></svg>
+      </a>
+      <a href="https://www.linkedin.com/in/harshit-sharma-🌀-002b8a329?utm_source=share_via&utm_content=profile&utm_medium=member_android" target="_blank" rel="noopener noreferrer" aria-label="LinkedIn">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="var(--accent)"><path d="M19 0h-14c-2.761 0-5 2.239-5 5v14c0 2.761 2.239 5 5 5h14c2.762 0 5-2.239 5-5v-14c0-2.761-2.238-5-5-5zm-11 19h-3v-11h3v11zm-1.5-12.268c-.966 0-1.75-.79-1.75-1.764s.784-1.764 1.75-1.764 1.75.79 1.75 1.764-.783 1.764-1.75 1.764zm13.5 12.268h-3v-5.604c0-3.368-4-3.113-4 0v5.604h-3v-11h3v1.765c1.396-2.586 7-2.777 7 2.476v6.759z"/></svg>
+      </a>
+      <a href="https://www.instagram.com/_harsh.it07?igsh=MTg1MHhtaXhvNndobw==" target="_blank" rel="noopener noreferrer" aria-label="Instagram">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="var(--accent)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="2" width="20" height="20" rx="4" ry="4"></rect><path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z"></path><line x1="17.5" y1="6.5" x2="17.51" y2="6.5"></line></svg>
+      </a>
+    </div>
+  </div>
+</footer>
+
+<script>
+// ═══════════════════════════════════════════════════════════
+// CONFIGURATION
+// ═══════════════════════════════════════════════════════════
+const API = window.location.protocol === 'file:' || window.location.hostname === 'localhost' 
+  ? 'http://localhost:3000/api' 
+  : window.location.origin + '/api';
+
+// ═══════════════════════════════════════════════════════════
+// AUTH STATE
+// ═══════════════════════════════════════════════════════════
+let currentUser = null;
+let authToken = localStorage.getItem('itp-token') || null;
+let currentPromptId = null;
+let historyPage = 1;
+
+// ═══════════════════════════════════════════════════════════
+// THEME
+// ═══════════════════════════════════════════════════════════
+const html = document.documentElement;
+html.setAttribute('data-theme', 'light');
+
+// ═══════════════════════════════════════════════════════════
+// SCROLL BAR & PARALLAX
+// ═══════════════════════════════════════════════════════════
+window.addEventListener('scroll', () => {
+  document.getElementById('bar').style.width =
+    (window.scrollY / (document.body.scrollHeight - window.innerHeight) * 100) + '%';
+  document.querySelectorAll('.mb').forEach((b, i) => {
+    b.style.transform = `translateY(${window.scrollY * (i + 1) * .03}px)`;
+  });
+});
+
+// ═══════════════════════════════════════════════════════════
+// REVEAL ON SCROLL
+// ═══════════════════════════════════════════════════════════
+const ro = new IntersectionObserver(es => {
+  es.forEach(e => {
+    if (e.isIntersecting) { e.target.classList.add('on'); ro.unobserve(e.target); }
+  });
+}, { threshold: .1 });
+document.querySelectorAll('.rv').forEach(el => ro.observe(el));
+
+// ═══════════════════════════════════════════════════════════
+// CHAR COUNT & KEYBOARD SHORTCUT
+// ═══════════════════════════════════════════════════════════
+const idea = document.getElementById('idea');
+idea.addEventListener('input', () => document.getElementById('cn').textContent = idea.value.length);
+idea.addEventListener('keydown', e => { if (e.key === 'Enter' && (e.metaKey || e.ctrlKey)) gen(); });
+
+// ═══════════════════════════════════════════════════════════
+// STYLE PILLS
+// ═══════════════════════════════════════════════════════════
+let aStyle = 'creative';
+document.querySelectorAll('.pill').forEach(b => {
+  b.addEventListener('click', () => {
+    document.querySelectorAll('.pill').forEach(x => x.classList.remove('on'));
+    b.classList.add('on');
+    aStyle = b.dataset.style;
+    const d = document.getElementById('descLine');
+    d.style.opacity = '0';
+    setTimeout(() => { d.textContent = b.dataset.desc; d.style.opacity = '1'; }, 150);
+  });
+});
+
+// ═══════════════════════════════════════════════════════════
+// TYPEWRITER
+// ═══════════════════════════════════════════════════════════
+function typewrite(el, text, speed = 16) {
+  el.textContent = ''; let i = 0;
+  const cur = document.createElement('span'); cur.className = 'cur'; el.appendChild(cur);
+  const iv = setInterval(() => {
+    if (i < text.length) { el.insertBefore(document.createTextNode(text[i]), cur); i++; }
+    else { clearInterval(iv); cur.remove(); }
+  }, speed);
+}
+
+// ═══════════════════════════════════════════════════════════
+// API HELPERS
+// ═══════════════════════════════════════════════════════════
+function apiHeaders() {
+  const h = { 'Content-Type': 'application/json' };
+  if (authToken) h['Authorization'] = `Bearer ${authToken}`;
+  return h;
+}
+
+async function apiFetch(path, options = {}) {
+  const res = await fetch(API + path, {
+    ...options,
+    headers: { ...apiHeaders(), ...(options.headers || {}) }
+  });
+  const data = await res.json();
+  if (!res.ok) throw new Error(data.error || 'Something went wrong.');
+  return data;
+}
+
+// ═══════════════════════════════════════════════════════════
+// GENERATE — NOW THROUGH BACKEND
+// ═══════════════════════════════════════════════════════════
+async function gen() {
+  const val = idea.value.trim();
+  const err = document.getElementById('err');
+  err.classList.remove('on');
+  if (!val) { err.textContent = 'Please enter your idea first.'; err.classList.add('on'); return; }
+
+  const btn = document.getElementById('genBtn');
+  const bt = document.getElementById('btext');
+  btn.disabled = true; bt.textContent = 'Generating…';
+  document.getElementById('out').style.display = 'none';
+
+  try {
+    const data = await apiFetch('/prompts/generate', {
+      method: 'POST',
+      body: JSON.stringify({ idea: val, style: aStyle })
+    });
+
+    const outEl = document.getElementById('out');
+    const otEl = document.getElementById('ot');
+    const trow = document.getElementById('trow');
+    outEl.style.display = 'block';
+    typewrite(otEl, data.prompt);
+    otEl._full = data.prompt;
+
+    // Store current prompt ID for favorites
+    currentPromptId = data.promptId;
+
+    // Show/hide favorite button based on auth state
+    const favBtn = document.getElementById('favBtn');
+    if (currentUser && currentPromptId) {
+      favBtn.style.display = 'inline-block';
+      favBtn.textContent = '♡ Favorite';
+      favBtn.classList.remove('fav');
+    } else {
+      favBtn.style.display = 'none';
+    }
+
+    // Tags
+    trow.innerHTML = '';
+    (data.tags || ['Role-Set', 'Contextual', 'Structured', 'Output-Defined', 'AI-Ready']).forEach((t, i) => {
+      setTimeout(() => {
+        const s = document.createElement('span'); s.className = 'tag'; s.textContent = t; trow.appendChild(s);
+      }, 300 + i * 100);
+    });
+    document.getElementById('wc').textContent = data.wordCount + ' words';
+    outEl.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+
+    // Refresh history if logged in
+    if (currentUser) setTimeout(() => loadHistory(), 500);
+
+  } catch (e) {
+    err.textContent = '⚠ ' + (e.message || 'Something went wrong.'); err.classList.add('on');
+  } finally {
+    btn.disabled = false; bt.textContent = 'Generate Prompt →';
+  }
+}
+
+// ═══════════════════════════════════════════════════════════
+// COPY
+// ═══════════════════════════════════════════════════════════
+async function cp() {
+  const el = document.getElementById('ot');
+  const text = el._full || el.textContent;
+  await navigator.clipboard.writeText(text).catch(() => {});
+  const b = document.getElementById('cpBtn');
+  b.textContent = '✓ Copied!'; b.classList.add('ok');
+  setTimeout(() => { b.textContent = 'Copy'; b.classList.remove('ok'); }, 2000);
+}
+
+// ═══════════════════════════════════════════════════════════
+// FAVORITES
+// ═══════════════════════════════════════════════════════════
+async function toggleFav() {
+  if (!currentPromptId || !authToken) return;
+  try {
+    const data = await apiFetch(`/prompts/${currentPromptId}/favorite`, { method: 'PATCH' });
+    const btn = document.getElementById('favBtn');
+    if (data.is_favorite) {
+      btn.textContent = '♥ Favorited';
+      btn.classList.add('fav');
+    } else {
+      btn.textContent = '♡ Favorite';
+      btn.classList.remove('fav');
+    }
+  } catch (e) {
+    console.warn('Favorite toggle failed:', e.message);
+  }
+}
+
+// ═══════════════════════════════════════════════════════════
+// AUTH MODAL
+// ═══════════════════════════════════════════════════════════
+let authMode = 'login'; // 'login' or 'register'
+
+function openModal(mode) {
+  authMode = mode;
+  const modal = document.getElementById('authModal');
+  const title = document.getElementById('modalTitle');
+  const sub = document.getElementById('modalSub');
+  const nameGroup = document.getElementById('nameGroup');
+  const submit = document.getElementById('authSubmit');
+  const switchEl = document.getElementById('formSwitch');
+
+  document.getElementById('formError').classList.remove('on');
+  document.getElementById('formSuccess').classList.remove('on');
+  document.getElementById('authForm').reset();
+
+  if (mode === 'login') {
+    title.textContent = 'Log in';
+    sub.textContent = 'Welcome back. Enter your details to continue.';
+    nameGroup.style.display = 'none';
+    submit.textContent = 'Log in';
+    switchEl.innerHTML = "Don't have an account? <a onclick=\"switchAuthMode()\">Sign up</a>";
+  } else {
+    title.textContent = 'Create account';
+    sub.textContent = 'Sign up for free to save your prompt history.';
+    nameGroup.style.display = 'block';
+    submit.textContent = 'Create account';
+    switchEl.innerHTML = "Already have an account? <a onclick=\"switchAuthMode()\">Log in</a>";
+  }
+
+  modal.classList.add('open');
+}
+
+function closeModal() {
+  document.getElementById('authModal').classList.remove('open');
+}
+
+function switchAuthMode() {
+  openModal(authMode === 'login' ? 'register' : 'login');
+}
+
+// Close modal on overlay click
+document.getElementById('authModal').addEventListener('click', (e) => {
+  if (e.target === e.currentTarget) closeModal();
+});
+
+// ═══════════════════════════════════════════════════════════
+// AUTH FORM HANDLER
+// ═══════════════════════════════════════════════════════════
+async function handleAuth(e) {
+  e.preventDefault();
+  const errEl = document.getElementById('formError');
+  const successEl = document.getElementById('formSuccess');
+  const submit = document.getElementById('authSubmit');
+  errEl.classList.remove('on');
+  successEl.classList.remove('on');
+
+  const email = document.getElementById('authEmail').value.trim();
+  const password = document.getElementById('authPassword').value;
+  const name = document.getElementById('authName').value.trim();
+
+  if (authMode === 'register' && !name) {
+    errEl.textContent = 'Please enter your name.';
+    errEl.classList.add('on');
+    return;
+  }
+
+  submit.disabled = true;
+  submit.textContent = authMode === 'login' ? 'Logging in…' : 'Creating account…';
+
+  try {
+    const endpoint = authMode === 'login' ? '/auth/login' : '/auth/register';
+    const body = authMode === 'login' ? { email, password } : { email, password, name };
+    const data = await apiFetch(endpoint, { method: 'POST', body: JSON.stringify(body) });
+
+    authToken = data.token;
+    currentUser = data.user;
+    localStorage.setItem('itp-token', authToken);
+
+    successEl.textContent = data.message;
+    successEl.classList.add('on');
+
+    setTimeout(() => {
+      closeModal();
+      updateAuthUI();
+      loadHistory();
+    }, 800);
+
+  } catch (e) {
+    errEl.textContent = e.message;
+    errEl.classList.add('on');
+  } finally {
+    submit.disabled = false;
+    submit.textContent = authMode === 'login' ? 'Log in' : 'Create account';
+  }
+}
+
+// ═══════════════════════════════════════════════════════════
+// AUTH UI UPDATE
+// ═══════════════════════════════════════════════════════════
+function updateAuthUI() {
+  const authBtns = document.getElementById('navAuth');
+  const userInfo = document.getElementById('navUser');
+  const historySection = document.getElementById('historySection');
+  const favBtn = document.getElementById('favBtn');
+
+  if (currentUser) {
+    authBtns.style.display = 'none';
+    userInfo.style.display = 'flex';
+    document.getElementById('navAvatar').textContent = (currentUser.name || 'U')[0].toUpperCase();
+    document.getElementById('navName').textContent = currentUser.name || 'User';
+    historySection.classList.add('open');
+    if (currentPromptId) favBtn.style.display = 'inline-block';
+  } else {
+    authBtns.style.display = 'flex';
+    userInfo.style.display = 'none';
+    historySection.classList.remove('open');
+    favBtn.style.display = 'none';
+  }
+}
+
+function logout() {
+  authToken = null;
+  currentUser = null;
+  localStorage.removeItem('itp-token');
+  updateAuthUI();
+}
+
+// ═══════════════════════════════════════════════════════════
+// PROMPT HISTORY
+// ═══════════════════════════════════════════════════════════
+async function loadHistory(page = 1) {
+  if (!authToken) return;
+  historyPage = page;
+
+  try {
+    const data = await apiFetch(`/prompts/history?page=${page}&limit=10`);
+    const list = document.getElementById('historyList');
+    const moreBtn = document.getElementById('historyMore');
+
+    if (page === 1) list.innerHTML = '';
+
+    if (data.prompts.length === 0 && page === 1) {
+      list.innerHTML = '<div class="history-empty">Generate some prompts to see them here!</div>';
+      moreBtn.style.display = 'none';
+      return;
+    }
+
+    data.prompts.forEach(p => {
+      const card = document.createElement('div');
+      card.className = 'history-card';
+      card.onclick = () => loadPromptFromHistory(p);
+      card.innerHTML = `
+        <div class="hc-idea">${escHtml(p.input_idea)}</div>
+        <div class="hc-meta">
+          <span class="hc-style">${p.style}</span>
+          <span>${p.word_count} words</span>
+          <span>${timeAgo(p.created_at)}</span>
+          ${p.is_favorite ? '<span class="hc-fav">♥</span>' : ''}
+        </div>
+      `;
+      list.appendChild(card);
+    });
+
+    moreBtn.style.display = data.pagination.page < data.pagination.pages ? 'block' : 'none';
+  } catch (e) {
+    console.warn('History load failed:', e.message);
+  }
+}
+
+function loadMoreHistory() {
+  loadHistory(historyPage + 1);
+}
+
+function loadPromptFromHistory(p) {
+  // Populate the generator with the history item
+  idea.value = p.input_idea;
+  document.getElementById('cn').textContent = p.input_idea.length;
+
+  // Set style pill
+  document.querySelectorAll('.pill').forEach(pill => {
+    pill.classList.toggle('on', pill.dataset.style === p.style);
+  });
+  aStyle = p.style;
+
+  // Show output
+  const outEl = document.getElementById('out');
+  const otEl = document.getElementById('ot');
+  outEl.style.display = 'block';
+  typewrite(otEl, p.output);
+  otEl._full = p.output;
+  currentPromptId = p.id;
+
+  document.getElementById('wc').textContent = p.word_count + ' words';
+
+  const favBtn = document.getElementById('favBtn');
+  favBtn.style.display = 'inline-block';
+  if (p.is_favorite) {
+    favBtn.textContent = '♥ Favorited';
+    favBtn.classList.add('fav');
+  } else {
+    favBtn.textContent = '♡ Favorite';
+    favBtn.classList.remove('fav');
+  }
+
+  // Scroll to generator
+  document.getElementById('app').scrollIntoView({ behavior: 'smooth' });
+}
+
+// ═══════════════════════════════════════════════════════════
+// UTILS
+// ═══════════════════════════════════════════════════════════
+function escHtml(str) {
+  const d = document.createElement('div'); d.textContent = str; return d.innerHTML;
+}
+
+function timeAgo(dateStr) {
+  const diff = Date.now() - new Date(dateStr + 'Z').getTime();
+  const mins = Math.floor(diff / 60000);
+  if (mins < 1) return 'just now';
+  if (mins < 60) return mins + 'm ago';
+  const hrs = Math.floor(mins / 60);
+  if (hrs < 24) return hrs + 'h ago';
+  const days = Math.floor(hrs / 24);
+  if (days < 30) return days + 'd ago';
+  return new Date(dateStr).toLocaleDateString();
+}
+
+// ═══════════════════════════════════════════════════════════
+// INIT — Check saved auth token on page load
+// ═══════════════════════════════════════════════════════════
+(async function init() {
+  if (authToken) {
+    try {
+      const data = await apiFetch('/auth/me');
+      currentUser = data.user;
+      updateAuthUI();
+      loadHistory();
+    } catch {
+      // Token expired or invalid — clear it
+      authToken = null;
+      localStorage.removeItem('itp-token');
+      updateAuthUI();
+    }
+  }
+})();
+</script>
+</body>
+</html>
